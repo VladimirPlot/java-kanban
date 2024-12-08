@@ -1,15 +1,14 @@
 public class Task {
 
-    private final String name;
-    private final String description;
-    private final int id;
+    private String name;
+    private String description;
+    private int id;
     private Status status;
 
-    public Task(String name, String description, int id) {
+    public Task(String name, String description, Status status) {
         this.name = name;
         this.description = description;
-        this.id = id;
-        this.status = Status.NEW;
+        this.status = status;
     }
 
     @Override
@@ -22,35 +21,35 @@ public class Task {
                 '}';
     }
 
-    public void setStatus(Status status) {
-        this.status = status;
-    }
-
-    public void upgradeStatus() {
-        if (status == Status.NEW){
-            setStatus(Status.IN_PROGRESS);
-            System.out.println("Статус задачи изменен на 'В ПРОЦЕССЕ'");
-        } else if (status == Status.IN_PROGRESS) {
-            setStatus(Status.DONE);
-            System.out.println("Статус задачи изменен на 'ЗАВЕРШЕН'");
-        } else if (status == Status.DONE) {
-            System.out.println("Статус задачи уже 'ЗАВЕРШЕН'");
-        }
-    }
-
     public String getName() {
         return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getDescription() {
         return description;
     }
 
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     public int getId() {
         return id;
     }
 
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public Status getStatus() {
         return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
     }
 }
