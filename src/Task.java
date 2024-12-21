@@ -1,3 +1,5 @@
+import java.util.Objects;
+
 public class Task {
 
     private String name;
@@ -11,6 +13,13 @@ public class Task {
         this.status = status;
     }
 
+    public Task(int id, String taskName, String description, Status status) {
+        this.id = id;
+        this.name = taskName;
+        this.description = description;
+        this.status = status;
+    }
+
     @Override
     public String toString() {
         return "Task{" +
@@ -19,6 +28,19 @@ public class Task {
                 ", description='" + description + '\'' +
                 ", status=" + status +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof Task task)) {
+            return false;
+        }
+        return id == task.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name);
     }
 
     public String getName() {

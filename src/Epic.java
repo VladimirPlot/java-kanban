@@ -8,12 +8,17 @@ public class Epic extends Task {
         super(name, description, Status.NEW);
     }
 
+    public Epic(int id, String taskName, String description, Status status) {
+        super(id, taskName, description, status);
+    }
+
+
     @Override
     public String toString() {
         return "Epic{" +
                 "id=" + getId() +
-                ", name='" + getName() + '\'' +
-                ", description='" + getDescription() + '\'' +
+                ", name=" + getName() +
+                ", subTasksIdList=" + getSubTasksList() +
                 ", status=" + getStatus() +
                 '}';
     }
