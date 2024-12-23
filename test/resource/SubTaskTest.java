@@ -1,3 +1,5 @@
+package resource;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,7 +20,7 @@ class SubTaskTest {
 
     @Test
     void testToString() {
-        String expected = "SubTask{id=1, epicId=1, name=Отжимания, status=NEW}";
+        String expected = "resource.SubTask{id=1, epicId=1, name=Отжимания, status=NEW}";
         String actually = subTask.toString();
         Assertions.assertEquals(expected, actually);
     }

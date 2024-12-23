@@ -1,6 +1,12 @@
+package manager;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import resource.Epic;
+import resource.Status;
+import resource.SubTask;
+import resource.Task;
 
 class InMemoryTaskManagerTest {
     private TaskManager taskManager;
@@ -36,7 +42,7 @@ class InMemoryTaskManagerTest {
     @Test
     void testCreateTask() {
         taskManager.createTask(task1);
-        String expected = "[Task{id=1, name='Купить продукты', description='Молоко и яйца', status=NEW}]";
+        String expected = "[resource.Task{id=1, name='Купить продукты', description='Молоко и яйца', status=NEW}]";
         String actually = taskManager.getAllTasks().toString();
         Assertions.assertEquals(expected, actually);
     }
@@ -45,7 +51,7 @@ class InMemoryTaskManagerTest {
     void testGetTaskById() {
         taskManager.createTask(task1);
         taskManager.createTask(task2);
-        String expected = "Task{id=1, name='Купить продукты', description='Молоко и яйца', status=NEW}";
+        String expected = "resource.Task{id=1, name='Купить продукты', description='Молоко и яйца', status=NEW}";
         String actually = taskManager.getTaskById(1).toString();
         Assertions.assertEquals(expected, actually);
     }
@@ -54,8 +60,8 @@ class InMemoryTaskManagerTest {
     void testGetAllTasks() {
         taskManager.createTask(task1);
         taskManager.createTask(task2);
-        String expected = "[Task{id=1, name='Купить продукты', description='Молоко и яйца', status=NEW}, " +
-                "Task{id=2, name='Путешествие', description='Собрать чемодан', status=DONE}]";
+        String expected = "[resource.Task{id=1, name='Купить продукты', description='Молоко и яйца', status=NEW}, " +
+                "resource.Task{id=2, name='Путешествие', description='Собрать чемодан', status=DONE}]";
         String actually = taskManager.getAllTasks().toString();
         Assertions.assertEquals(expected, actually);
     }
@@ -63,7 +69,7 @@ class InMemoryTaskManagerTest {
     @Test
     void testUpdateTask() {
         taskManager.createTask(task1);
-        String expected = "Task{id=1, name='Путешествие', description='Собрать чемодан', status=DONE}";
+        String expected = "resource.Task{id=1, name='Путешествие', description='Собрать чемодан', status=DONE}";
         Task task = new Task(1, "Путешествие", "Собрать чемодан", Status.DONE);
         taskManager.updateTask(task);
         String actually = taskManager.getTaskById(1).toString();
@@ -75,7 +81,7 @@ class InMemoryTaskManagerTest {
         taskManager.createTask(task1);
         taskManager.createTask(task2);
         taskManager.removeTaskById(2);
-        String expected = "[Task{id=1, name='Купить продукты', description='Молоко и яйца', status=NEW}]";
+        String expected = "[resource.Task{id=1, name='Купить продукты', description='Молоко и яйца', status=NEW}]";
         String actually = taskManager.getAllTasks().toString();
         Assertions.assertEquals(expected, actually);
     }
@@ -93,8 +99,8 @@ class InMemoryTaskManagerTest {
     void testAddEpic() {
         taskManager.createEpic(epic1);
         taskManager.createEpic(epic2);
-        String expected = "[Epic{id=1, name=Уборка по дому, subTasksIdList=[], status=NEW}, " +
-                "Epic{id=2, name=Собеседование, subTasksIdList=[], status=NEW}]";
+        String expected = "[resource.Epic{id=1, name=Уборка по дому, subTasksIdList=[], status=NEW}, " +
+                "resource.Epic{id=2, name=Собеседование, subTasksIdList=[], status=NEW}]";
         String actually = taskManager.getAllEpics().toString();
         Assertions.assertEquals(expected, actually);
     }
@@ -103,7 +109,7 @@ class InMemoryTaskManagerTest {
     void testGetEpicById() {
         taskManager.createEpic(epic1);
         taskManager.createEpic(epic2);
-        String expected = "Epic{id=2, name=Собеседование, subTasksIdList=[], status=NEW}";
+        String expected = "resource.Epic{id=2, name=Собеседование, subTasksIdList=[], status=NEW}";
         String actually = taskManager.getEpicById(2).toString();
         Assertions.assertEquals(expected, actually);
     }
@@ -112,8 +118,8 @@ class InMemoryTaskManagerTest {
     void testGetAllEpics() {
         taskManager.createEpic(epic1);
         taskManager.createEpic(epic2);
-        String expected = "[Epic{id=1, name=Уборка по дому, subTasksIdList=[], status=NEW}, " +
-                "Epic{id=2, name=Собеседование, subTasksIdList=[], status=NEW}]";
+        String expected = "[resource.Epic{id=1, name=Уборка по дому, subTasksIdList=[], status=NEW}, " +
+                "resource.Epic{id=2, name=Собеседование, subTasksIdList=[], status=NEW}]";
         String actually = taskManager.getAllEpics().toString();
         Assertions.assertEquals(expected, actually);
     }
@@ -124,7 +130,7 @@ class InMemoryTaskManagerTest {
         Epic epic = taskManager.getEpicById(1);
         epic.setName("Новое имя");
         taskManager.updateEpic(epic);
-        String expected = "[Epic{id=1, name=Новое имя, subTasksIdList=[], status=NEW}]";
+        String expected = "[resource.Epic{id=1, name=Новое имя, subTasksIdList=[], status=NEW}]";
         String actually = taskManager.getAllEpics().toString();
         Assertions.assertEquals(expected, actually);
     }
@@ -134,7 +140,7 @@ class InMemoryTaskManagerTest {
         taskManager.createEpic(epic1);
         taskManager.createEpic(epic2);
         taskManager.removeEpicById(2);
-        String expected = "[Epic{id=1, name=Уборка по дому, subTasksIdList=[], status=NEW}]";
+        String expected = "[resource.Epic{id=1, name=Уборка по дому, subTasksIdList=[], status=NEW}]";
         String actually = taskManager.getAllEpics().toString();
         Assertions.assertEquals(expected, actually);
     }
@@ -158,7 +164,7 @@ class InMemoryTaskManagerTest {
                 Status.NEW
         );
         taskManager.createSubTask(subTask1);
-        String expected = "[SubTask{id=2, epicId=1, name=Помыть окна, status=NEW}]";
+        String expected = "[resource.SubTask{id=2, epicId=1, name=Помыть окна, status=NEW}]";
         String actually = taskManager.getAllSubTasks().toString();
         Assertions.assertEquals(expected, actually);
     }
@@ -173,7 +179,7 @@ class InMemoryTaskManagerTest {
                 Status.NEW
         );
         taskManager.createSubTask(subTask1);
-        String expected = "SubTask{id=2, epicId=1, name=Помыть окна, status=NEW}";
+        String expected = "resource.SubTask{id=2, epicId=1, name=Помыть окна, status=NEW}";
         String actually = taskManager.getSubTaskById(2).toString();
         Assertions.assertEquals(expected, actually);
     }
@@ -206,9 +212,9 @@ class InMemoryTaskManagerTest {
         taskManager.createSubTask(subTask2);
         taskManager.createSubTask(subTask3);
 
-        String expected = "[SubTask{id=3, epicId=1, name=Помыть окна, status=NEW}, " +
-                "SubTask{id=4, epicId=1, name=Помыть полы, status=NEW}, " +
-                "SubTask{id=5, epicId=2, name=Посмотреть теорию, status=NEW}]";
+        String expected = "[resource.SubTask{id=3, epicId=1, name=Помыть окна, status=NEW}, " +
+                "resource.SubTask{id=4, epicId=1, name=Помыть полы, status=NEW}, " +
+                "resource.SubTask{id=5, epicId=2, name=Посмотреть теорию, status=NEW}]";
         String actually = taskManager.getAllSubTasks().toString();
         Assertions.assertEquals(expected, actually);
     }
@@ -246,9 +252,9 @@ class InMemoryTaskManagerTest {
         subTask1.setName("Обновленная задача");
         taskManager.updateSubTask(subTask1);
 
-        String expected = "[SubTask{id=3, epicId=1, name=Обновленная задача, status=NEW}, " +
-                "SubTask{id=4, epicId=1, name=Помыть полы, status=NEW}, " +
-                "SubTask{id=5, epicId=2, name=Посмотреть теорию, status=NEW}]";
+        String expected = "[resource.SubTask{id=3, epicId=1, name=Обновленная задача, status=NEW}, " +
+                "resource.SubTask{id=4, epicId=1, name=Помыть полы, status=NEW}, " +
+                "resource.SubTask{id=5, epicId=2, name=Посмотреть теорию, status=NEW}]";
         String actually = taskManager.getAllSubTasks().toString();
         Assertions.assertEquals(expected, actually);
     }
@@ -284,8 +290,8 @@ class InMemoryTaskManagerTest {
 
         taskManager.removeSubTaskById(3);
 
-        String expected = "[SubTask{id=4, epicId=1, name=Помыть полы, status=NEW}, " +
-                "SubTask{id=5, epicId=2, name=Посмотреть теорию, status=NEW}]";
+        String expected = "[resource.SubTask{id=4, epicId=1, name=Помыть полы, status=NEW}, " +
+                "resource.SubTask{id=5, epicId=2, name=Посмотреть теорию, status=NEW}]";
         String actually = taskManager.getAllSubTasks().toString();
         Assertions.assertEquals(expected, actually);
     }
@@ -364,12 +370,12 @@ class InMemoryTaskManagerTest {
         taskManager.getSubTaskById(7);
 
         Assertions.assertEquals(historySize, taskManager.getHistory().size());
-        String expected = "[Task{id=1, name='Купить продукты', description='Молоко и яйца', status=NEW}, " +
-                "Task{id=2, name='Путешествие', description='Собрать чемодан', status=DONE}, " +
-                "Epic{id=3, name=Уборка по дому, subTasksIdList=[5, 6], status=NEW}, " +
-                "Epic{id=4, name=Собеседование, subTasksIdList=[7], status=NEW}, " +
-                "SubTask{id=5, epicId=3, name=Помыть окна, status=NEW}, " +
-                "SubTask{id=7, epicId=4, name=Посмотреть теорию, status=NEW}]";
+        String expected = "[resource.Task{id=1, name='Купить продукты', description='Молоко и яйца', status=NEW}, " +
+                "resource.Task{id=2, name='Путешествие', description='Собрать чемодан', status=DONE}, " +
+                "resource.Epic{id=3, name=Уборка по дому, subTasksIdList=[5, 6], status=NEW}, " +
+                "resource.Epic{id=4, name=Собеседование, subTasksIdList=[7], status=NEW}, " +
+                "resource.SubTask{id=5, epicId=3, name=Помыть окна, status=NEW}, " +
+                "resource.SubTask{id=7, epicId=4, name=Посмотреть теорию, status=NEW}]";
         String actually = taskManager.getHistory().toString();
         Assertions.assertEquals(expected, actually);
     }
@@ -420,16 +426,16 @@ class InMemoryTaskManagerTest {
         taskManager.getEpicById(4);
 
         Assertions.assertEquals(historySize, taskManager.getHistory().size());
-        String expected = "[Epic{id=3, name=Уборка по дому, subTasksIdList=[5, 6], status=NEW}, " +
-                "Epic{id=4, name=Собеседование, subTasksIdList=[7], status=NEW}, " +
-                "SubTask{id=5, epicId=3, name=Помыть окна, status=NEW}, " +
-                "SubTask{id=7, epicId=4, name=Посмотреть теорию, status=NEW}, " +
-                "Epic{id=4, name=Собеседование, subTasksIdList=[7], status=NEW}, " +
-                "SubTask{id=5, epicId=3, name=Помыть окна, status=NEW}, " +
-                "SubTask{id=6, epicId=3, name=Помыть полы, status=NEW}, " +
-                "Task{id=1, name='Купить продукты', description='Молоко и яйца', status=NEW}, " +
-                "SubTask{id=5, epicId=3, name=Помыть окна, status=NEW}, " +
-                "Epic{id=4, name=Собеседование, subTasksIdList=[7], status=NEW}]";
+        String expected = "[resource.Epic{id=3, name=Уборка по дому, subTasksIdList=[5, 6], status=NEW}, " +
+                "resource.Epic{id=4, name=Собеседование, subTasksIdList=[7], status=NEW}, " +
+                "resource.SubTask{id=5, epicId=3, name=Помыть окна, status=NEW}, " +
+                "resource.SubTask{id=7, epicId=4, name=Посмотреть теорию, status=NEW}, " +
+                "resource.Epic{id=4, name=Собеседование, subTasksIdList=[7], status=NEW}, " +
+                "resource.SubTask{id=5, epicId=3, name=Помыть окна, status=NEW}, " +
+                "resource.SubTask{id=6, epicId=3, name=Помыть полы, status=NEW}, " +
+                "resource.Task{id=1, name='Купить продукты', description='Молоко и яйца', status=NEW}, " +
+                "resource.SubTask{id=5, epicId=3, name=Помыть окна, status=NEW}, " +
+                "resource.Epic{id=4, name=Собеседование, subTasksIdList=[7], status=NEW}]";
         String actually = taskManager.getHistory().toString();
         Assertions.assertEquals(expected, actually);
 

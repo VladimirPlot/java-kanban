@@ -1,3 +1,5 @@
+package resource;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -43,7 +45,7 @@ class EpicTest {
 
     @Test
     void testToString() {
-        String expected = "Epic{id=1, name=Уборка, subTasksIdList=[], status=NEW}";
+        String expected = "resource.Epic{id=1, name=Уборка, subTasksIdList=[], status=NEW}";
         String actually = epic1.toString();
         Assertions.assertEquals(expected, actually);
     }

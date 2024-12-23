@@ -1,6 +1,12 @@
+package manager;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import resource.Epic;
+import resource.Status;
+import resource.SubTask;
+import resource.Task;
 
 class InMemoryHistoryManagerTest {
     private HistoryManager historyManager;
@@ -77,13 +83,13 @@ class InMemoryHistoryManagerTest {
         historyManager.add(subTask2);
         historyManager.add(subTask3);
 
-        String expected = "[Task{id=1, name='Купить продукты', description='Молоко и яйца', status=NEW}, " +
-                "Epic{id=3, name=Уборка по дому, subTasksIdList=[], status=NEW}, " +
-                "Task{id=2, name='Путешествие', description='Собрать чемодан', status=DONE}, " +
-                "Epic{id=4, name=Собеседование, subTasksIdList=[], status=NEW}, " +
-                "SubTask{id=5, epicId=3, name=Сухая уборка, status=NEW}, " +
-                "SubTask{id=6, epicId=3, name=Влажная уборка, status=NEW}, " +
-                "SubTask{id=7, epicId=4, name=Посмотреть видео на ютуб, status=NEW}]";
+        String expected = "[resource.Task{id=1, name='Купить продукты', description='Молоко и яйца', status=NEW}, " +
+                "resource.Epic{id=3, name=Уборка по дому, subTasksIdList=[], status=NEW}, " +
+                "resource.Task{id=2, name='Путешествие', description='Собрать чемодан', status=DONE}, " +
+                "resource.Epic{id=4, name=Собеседование, subTasksIdList=[], status=NEW}, " +
+                "resource.SubTask{id=5, epicId=3, name=Сухая уборка, status=NEW}, " +
+                "resource.SubTask{id=6, epicId=3, name=Влажная уборка, status=NEW}, " +
+                "resource.SubTask{id=7, epicId=4, name=Посмотреть видео на ютуб, status=NEW}]";
         String actually = historyManager.getHistory().toString();
         Assertions.assertEquals(expected, actually);
     }
@@ -98,13 +104,13 @@ class InMemoryHistoryManagerTest {
         historyManager.add(subTask1);
         historyManager.add(subTask3);
 
-        String expected = "[Task{id=1, name='Купить продукты', description='Молоко и яйца', status=NEW}, " +
-                "Epic{id=3, name=Уборка по дому, subTasksIdList=[], status=NEW}, " +
-                "Task{id=2, name='Путешествие', description='Собрать чемодан', status=DONE}, " +
-                "Epic{id=4, name=Собеседование, subTasksIdList=[], status=NEW}, " +
-                "SubTask{id=6, epicId=3, name=Влажная уборка, status=NEW}, " +
-                "SubTask{id=5, epicId=3, name=Сухая уборка, status=NEW}, " +
-                "SubTask{id=7, epicId=4, name=Посмотреть видео на ютуб, status=NEW}]";
+        String expected = "[resource.Task{id=1, name='Купить продукты', description='Молоко и яйца', status=NEW}, " +
+                "resource.Epic{id=3, name=Уборка по дому, subTasksIdList=[], status=NEW}, " +
+                "resource.Task{id=2, name='Путешествие', description='Собрать чемодан', status=DONE}, " +
+                "resource.Epic{id=4, name=Собеседование, subTasksIdList=[], status=NEW}, " +
+                "resource.SubTask{id=6, epicId=3, name=Влажная уборка, status=NEW}, " +
+                "resource.SubTask{id=5, epicId=3, name=Сухая уборка, status=NEW}, " +
+                "resource.SubTask{id=7, epicId=4, name=Посмотреть видео на ютуб, status=NEW}]";
         String actually = historyManager.getHistory().toString();
         Assertions.assertEquals(expected, actually);
     }

@@ -1,3 +1,5 @@
+package resource;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,7 +17,7 @@ public class Epic extends Task {
 
     @Override
     public String toString() {
-        return "Epic{" +
+        return "resource.Epic{" +
                 "id=" + getId() +
                 ", name=" + getName() +
                 ", subTasksIdList=" + getSubTasksList() +

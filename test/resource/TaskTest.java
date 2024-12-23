@@ -1,3 +1,5 @@
+package resource;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,7 +27,7 @@ class TaskTest {
 
     @Test
     void testToString() {
-        String expected = "Task{id=1, name='Купить продукты', description='Яйца, молоко, хлеб', status=NEW}";
+        String expected = "resource.Task{id=1, name='Купить продукты', description='Яйца, молоко, хлеб', status=NEW}";
         String actually = task1.toString();
         Assertions.assertEquals(expected, actually);
     }

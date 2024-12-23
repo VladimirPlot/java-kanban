@@ -1,3 +1,10 @@
+package manager;
+
+import resource.Epic;
+import resource.Status;
+import resource.SubTask;
+import resource.Task;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -25,7 +32,7 @@ public class InMemoryTaskManager implements TaskManager{
 
     @Override
     public List<Task> getAllTasks() {
-        return taskMap.values().stream().toList();
+        return new ArrayList<>(taskMap.values());
     }
 
     @Override
@@ -67,7 +74,10 @@ public class InMemoryTaskManager implements TaskManager{
     @Override
     public void updateEpic(Epic epic) {
         if (epicMap.containsKey(epic.getId())) {
-            epicMap.replace(epic.getId(), epic);
+            if(epicMap.get(epic.getId()).getStatus().equals(epic.getStatus()) &&
+                    epicMap.get(epic.getId()).getSubTasksList().equals(epic.getSubTasksList())) {
+                epicMap.replace(epic.getId(), epic);
+            }
         }
     }
 
