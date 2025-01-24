@@ -382,7 +382,7 @@ class InMemoryTaskManagerTest {
 
     @Test
     void testHistoryShouldNotExceedTenEentries() {
-        final int historySize = 10;
+        final int historySize = 7;
         taskManager.createTask(task1);
         taskManager.createTask(task2);
         taskManager.createEpic(epic1);
@@ -426,12 +426,9 @@ class InMemoryTaskManagerTest {
         taskManager.getEpicById(4);
 
         Assertions.assertEquals(historySize, taskManager.getHistory().size());
-        String expected = "[resource.Epic{id=3, name=Уборка по дому, subTasksIdList=[5, 6], status=NEW}, " +
-                "resource.Epic{id=4, name=Собеседование, subTasksIdList=[7], status=NEW}, " +
-                "resource.SubTask{id=5, epicId=3, name=Помыть окна, status=NEW}, " +
+        String expected = "[resource.Task{id=2, name='Путешествие', description='Собрать чемодан', status=DONE}, " +
+                "resource.Epic{id=3, name=Уборка по дому, subTasksIdList=[5, 6], status=NEW}, " +
                 "resource.SubTask{id=7, epicId=4, name=Посмотреть теорию, status=NEW}, " +
-                "resource.Epic{id=4, name=Собеседование, subTasksIdList=[7], status=NEW}, " +
-                "resource.SubTask{id=5, epicId=3, name=Помыть окна, status=NEW}, " +
                 "resource.SubTask{id=6, epicId=3, name=Помыть полы, status=NEW}, " +
                 "resource.Task{id=1, name='Купить продукты', description='Молоко и яйца', status=NEW}, " +
                 "resource.SubTask{id=5, epicId=3, name=Помыть окна, status=NEW}, " +

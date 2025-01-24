@@ -130,7 +130,7 @@ class InMemoryHistoryManagerTest {
 
     @Test
     void sizeOfStoriesShouldNotExceedTenElements() {
-        final int historySize = 10;
+        final int historySize = 7;
 
         historyManager.add(task1);
         historyManager.add(epic1);

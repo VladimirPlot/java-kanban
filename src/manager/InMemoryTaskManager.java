@@ -32,7 +32,7 @@ public class InMemoryTaskManager implements TaskManager{
 
     @Override
     public List<Task> getAllTasks() {
-        return new ArrayList<>(taskMap.values());
+        return taskMap.values().stream().toList();
     }
 
     @Override
@@ -46,6 +46,7 @@ public class InMemoryTaskManager implements TaskManager{
     @Override
     public void removeTaskById(int id) {
         taskMap.remove(id);
+        historyManager.remove(id);
     }
 
     @Override
@@ -74,10 +75,7 @@ public class InMemoryTaskManager implements TaskManager{
     @Override
     public void updateEpic(Epic epic) {
         if (epicMap.containsKey(epic.getId())) {
-            if(epicMap.get(epic.getId()).getStatus().equals(epic.getStatus()) &&
-                    epicMap.get(epic.getId()).getSubTasksList().equals(epic.getSubTasksList())) {
-                epicMap.replace(epic.getId(), epic);
-            }
+            epicMap.replace(epic.getId(), epic);
         }
     }
 
@@ -86,6 +84,7 @@ public class InMemoryTaskManager implements TaskManager{
         Epic epic = epicMap.get(id);
         removeListSubTasks(epic.getSubTasksList());
         epicMap.remove(id);
+        historyManager.remove(id);
     }
 
     @Override
@@ -130,6 +129,7 @@ public class InMemoryTaskManager implements TaskManager{
         epic.removeSubTaskInList(id);
         subTaskMap.remove(id);
         updateEpicStatus(epic);
+        historyManager.remove(id);
     }
 
     @Override
