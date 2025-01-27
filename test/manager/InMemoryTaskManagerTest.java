@@ -17,7 +17,7 @@ class InMemoryTaskManagerTest {
 
     @BeforeEach
     void setUp() {
-        
+
         task1 = new Task(
                 "Купить продукты",
                 "Молоко и яйца",
