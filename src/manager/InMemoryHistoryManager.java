@@ -28,10 +28,10 @@ public class InMemoryHistoryManager implements HistoryManager {
     }
 
     @Override
-    public void add(Task zadacha) {
-        if (zadacha != null) {
-            remove(zadacha.getId());
-            linkLast(zadacha);
+    public void add(Task task) {
+        if (task != null) {
+            remove(task.getId());
+            linkLast(task);
         }
     }
 
