@@ -15,8 +15,7 @@ public class InMemoryHistoryManager implements HistoryManager {
         this.receivedTasks = new HashMap<>();
     }
 
-    private static final class Node<Task> {
-
+    private static class Node<Task> {
         public Task data;
         public Node<Task> next;
         public Node<Task> prev;
