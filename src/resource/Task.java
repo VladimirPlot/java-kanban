@@ -22,6 +22,10 @@ public class Task {
         this.status = status;
     }
 
+    public String serializeToCsv() {
+        return String.format("%s,%s,%s,%s,%s\n", id, TaskType.TASK, name, status, description);
+    }
+
     @Override
     public String toString() {
         return "resource.Task{" +

@@ -104,4 +104,11 @@ class TaskTest {
         Status actually = task1.getStatus();
         Assertions.assertEquals(expected, actually);
     }
+
+    @Test
+    void testSerializeToCsv() {
+        String expected = "1,TASK,Купить продукты,NEW,Яйца, молоко, хлеб\n";
+        String actually = task1.serializeToCsv();
+        Assertions.assertEquals(expected, actually);
+    }
 }
