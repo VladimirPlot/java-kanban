@@ -87,4 +87,11 @@ class EpicTest {
         List<Integer> actually = epic1.getSubTasksList();
         Assertions.assertEquals(expected, actually);
     }
+
+    @Test
+    void testSerializeToCsv() {
+        String expected = "1,EPIC,Уборка,NEW,Ванна, спальня, кухня,[]\n";
+        String actually = epic1.serializeToCsv();
+        Assertions.assertEquals(expected, actually);
+    }
 }

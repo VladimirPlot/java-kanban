@@ -25,6 +25,11 @@ public class Epic extends Task {
                 '}';
     }
 
+    @Override
+    public String serializeToCsv() {
+        return String.format("%s,%s,%s,%s,%s,%s\n", getId(), TaskType.EPIC, getName(), getStatus(), getDescription(), subTasks);
+    }
+
     public void addSubTaskId(SubTask subTask) {
         subTasks.add(subTask.getId());
     }

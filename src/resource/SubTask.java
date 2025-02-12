@@ -24,6 +24,11 @@ public class SubTask extends Task {
                 '}';
     }
 
+    @Override
+    public String serializeToCsv() {
+        return String.format("%s,%s,%s,%s,%s,%s\n", getId(), TaskType.SUBTASK, getName(), getStatus(), getDescription(), getIdEpic());
+    }
+
     public void setEpicId(int epicId) {
         this.epicId = epicId;
     }
