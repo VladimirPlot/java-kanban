@@ -5,6 +5,7 @@ import resource.*;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,153 +28,91 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         saveToCsv(lines);
     }
 
-    public void load() {
-        List<String> lines;
-        try {
-            lines = loadFromCsv();
-        } catch (ManagerSaveException e) {
-            throw new RuntimeException(e);
+    public static FileBackedTaskManager loadFromFile(File file) {
+        FileBackedTaskManager manager = new FileBackedTaskManager(file);
+        List<String> lines = manager.loadFromCsv();
+
+        if (!lines.isEmpty()) {
+            lines.removeFirst(); // Убираем заголовок
+            for (String line : lines) {
+                manager.deSerialize(line);
+            }
         }
 
-        lines.removeFirst();
-
-        for (String line : lines) {
-            deSerialize(line);
-        }
+        return manager;
     }
 
     @Override
     public void createTask(Task task) {
         super.createTask(task);
-
-        try {
-            save();
-        } catch (ManagerSaveException e) {
-            throw new RuntimeException("Произошла ошибка сохранения задачи: " + task.getName());
-        }
+        save();
     }
 
     @Override
     public Task updateTask(Task task) {
         Task updatedTask = super.updateTask(task);
-
-        try {
-            save();
-        } catch (ManagerSaveException e) {
-            throw new RuntimeException("Произошла ошибка сохранения задачи: " + task.getName());
-        }
-
+        save();
         return updatedTask;
     }
 
     @Override
     public void removeTaskById(int id) {
         super.removeTaskById(id);
-
-        try {
-            save();
-        } catch (ManagerSaveException e) {
-            throw new RuntimeException("Произошла ошибка сохранения задачи c id=" + id);
-        }
+        save();
     }
 
     @Override
     public void removeAllTasks() {
         super.removeAllTasks();
-
-        try {
-            save();
-        } catch (ManagerSaveException e) {
-            throw new RuntimeException("Произошла ошибка сохранения задач в файл при удалении.");
-        }
+        save();
     }
 
     @Override
     public void createEpic(Epic epic) {
         super.createEpic(epic);
-
-        try {
-            save();
-        } catch (ManagerSaveException e) {
-            throw new RuntimeException("Произошла ошибка сохранения эпика: " + epic.getName());
-        }
+        save();
     }
 
     @Override
     public void updateEpic(Epic epic) {
         super.updateEpic(epic);
-
-        try {
-            save();
-        } catch (ManagerSaveException e) {
-            throw new RuntimeException("Произошла ошибка сохранения эпика: " + epic.getName());
-        }
+        save();
     }
 
     @Override
     public void removeEpicById(int id) {
         super.removeEpicById(id);
-
-        try {
-            save();
-        } catch (ManagerSaveException e) {
-            throw new RuntimeException("Произошла ошибка сохранения эпика с id=" + id);
-        }
+        save();
     }
 
     @Override
     public void removeAllEpics() {
         super.removeAllEpics();
-
-        try {
-            save();
-        } catch (ManagerSaveException e) {
-            throw new RuntimeException("Произошла ошибка сохранения эпиков в файл при удалении.");
-        }
+        save();
     }
 
     @Override
     public void createSubTask(SubTask subTask) {
         super.createSubTask(subTask);
-
-        try {
-            save();
-        } catch (ManagerSaveException e) {
-            throw new RuntimeException("Произошла ошибка сохранения подзадачи: " + subTask.getName());
-        }
+        save();
     }
 
     @Override
     public void updateSubTask(SubTask subTask) {
         super.updateSubTask(subTask);
-
-        try {
-            save();
-        } catch (ManagerSaveException e) {
-            throw new RuntimeException("Произошла ошибка сохранения подзадачи: " + subTask.getName());
-        }
+        save();
     }
 
     @Override
     public void removeSubTaskById(int id) {
         super.removeSubTaskById(id);
-
-        try {
-            save();
-        } catch (ManagerSaveException e) {
-            throw new RuntimeException("Произошла ошибка сохранения эпика с id=" + id);
-        }
+        save();
     }
 
     @Override
     public void removeAllSubTasks() {
         super.removeAllSubTasks();
-
-        try {
-            save();
-        } catch (ManagerSaveException e) {
-            throw new RuntimeException("Произошла ошибка сохранения подзадач в файл при удалении.");
-        }
+        save();
     }
 
     private void saveToCsv(List<String> lines) throws ManagerSaveException {
@@ -181,18 +120,13 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             throw new ManagerSaveException("Невозможно сохранить данные в файл.");
         }
 
-        try {
-            FileWriter fileWriter = new FileWriter(file, StandardCharsets.UTF_8, false);
-            BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
-
+        try (BufferedWriter writer = Files.newBufferedWriter(file.toPath(), StandardCharsets.UTF_8)) {
             for (String line : lines) {
-                bufferedWriter.write(line);
+                writer.write(line);
+                writer.newLine(); // Добавляем перенос строки
             }
-
-            bufferedWriter.close();
-
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new ManagerSaveException("Ошибка при сохранении данных в CSV: " + e.getMessage());
         }
     }
 
@@ -203,25 +137,32 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
         List<String> lines = new ArrayList<>();
 
-        try {
-            FileReader fileReader = new FileReader(file);
-            BufferedReader bufferedReader = new BufferedReader(fileReader);
-
-            while (bufferedReader.ready()) {
-                lines.add(bufferedReader.readLine());
+        try (BufferedReader reader = Files.newBufferedReader(file.toPath(), StandardCharsets.UTF_8)) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                lines.add(line);
             }
-
-            bufferedReader.close();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new ManagerSaveException("Ошибка при загрузке данных из CSV: " + e.getMessage());
         }
 
         return lines;
     }
 
     private void deSerialize(String line) {
+        if (line.isBlank()) { // Проверяем, что строка не пустая
+            return;
+        }
+
         String[] lines = line.trim().split(",");
+
+        if (lines.length < 5) { // Минимальная длина для корректных записей
+            System.out.println("Ошибка: некорректный формат строки - " + line);
+            return;
+        }
+
         TaskType taskType = TaskType.valueOf(lines[1]);
+
         switch (taskType) {
             case TASK -> super.createTask(
                     new Task(

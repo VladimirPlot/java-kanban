@@ -19,8 +19,6 @@ public class Managers {
     }
 
     public static FileBackedTaskManager loadFromFile(File file) {
-        FileBackedTaskManager fileBackedTaskManager = new FileBackedTaskManager(file);
-        fileBackedTaskManager.load();
-        return fileBackedTaskManager;
+        return FileBackedTaskManager.loadFromFile(file);
     }
 }
