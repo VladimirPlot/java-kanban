@@ -8,6 +8,11 @@ import resource.Status;
 import resource.SubTask;
 import resource.Task;
 
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+
 class InMemoryHistoryManagerTest {
     private HistoryManager historyManager;
     private Task task1;
@@ -26,27 +31,35 @@ class InMemoryHistoryManagerTest {
                 1,
                 "Купить продукты",
                 "Молоко и яйца",
-                Status.NEW
+                Status.NEW,
+                Duration.ofMinutes(15),
+                LocalDateTime.of(LocalDate.of(2025, 2, 15), LocalTime.of(8, 0))
         );
 
         task2 = new Task(
                 2,
                 "Путешествие",
                 "Собрать чемодан",
-                Status.DONE
+                Status.DONE,
+                Duration.ofMinutes(15),
+                LocalDateTime.of(LocalDate.of(2025, 2, 15), LocalTime.of(9, 0))
         );
 
         epic1 = new Epic(
                 3,
                 "Уборка по дому",
                 "Ванна Кухня Спальня",
-                Status.NEW
+                Status.NEW,
+                Duration.ofMinutes(15),
+                LocalDateTime.of(LocalDate.of(2025, 2, 15), LocalTime.of(10, 0))
         );
         epic2 = new Epic(
                 4,
                 "Собеседование",
                 "Подготовиться по теории",
-                Status.NEW
+                Status.NEW,
+                Duration.ofMinutes(15),
+                LocalDateTime.of(LocalDate.of(2025, 2, 15), LocalTime.of(11, 0))
         );
 
         subTask1 = new SubTask(
@@ -54,14 +67,18 @@ class InMemoryHistoryManagerTest {
                 3,
                 "Сухая уборка",
                 "Подмести",
-                Status.NEW
+                Status.NEW,
+                Duration.ofMinutes(15),
+                LocalDateTime.of(LocalDate.of(2025, 2, 15), LocalTime.of(12, 0))
         );
         subTask2 = new SubTask(
                 6,
                 3,
                 "Влажная уборка",
                 "Помыть полы шваброй",
-                Status.NEW
+                Status.NEW,
+                Duration.ofMinutes(15),
+                LocalDateTime.of(LocalDate.of(2025, 2, 15), LocalTime.of(13, 0))
         );
 
         subTask3 = new SubTask(
@@ -69,7 +86,9 @@ class InMemoryHistoryManagerTest {
                 4,
                 "Посмотреть видео на ютуб",
                 "Записи собеседований",
-                Status.NEW
+                Status.NEW,
+                Duration.ofMinutes(15),
+                LocalDateTime.of(LocalDate.of(2025, 2, 15), LocalTime.of(14, 0))
         );
     }
 
@@ -83,13 +102,13 @@ class InMemoryHistoryManagerTest {
         historyManager.add(subTask2);
         historyManager.add(subTask3);
 
-        String expected = "[resource.Task{id=1, name='Купить продукты', description='Молоко и яйца', status=NEW}, " +
-                "resource.Epic{id=3, name=Уборка по дому, subTasksIdList=[], status=NEW}, " +
-                "resource.Task{id=2, name='Путешествие', description='Собрать чемодан', status=DONE}, " +
-                "resource.Epic{id=4, name=Собеседование, subTasksIdList=[], status=NEW}, " +
-                "resource.SubTask{id=5, epicId=3, name=Сухая уборка, status=NEW}, " +
-                "resource.SubTask{id=6, epicId=3, name=Влажная уборка, status=NEW}, " +
-                "resource.SubTask{id=7, epicId=4, name=Посмотреть видео на ютуб, status=NEW}]";
+        String expected = "[resource.Task{id=1, name='Купить продукты', description='Молоко и яйца', status=NEW, duration=15, startTime=08:00:00/15.02.2025, endTime=08:15:00/15.02.2025}, " +
+                "resource.Epic{id=3, name=Уборка по дому, subTasksIdList=[], status=NEW, duration=15, startTime=10:00:00/15.02.2025, endTime=10:15:00/15.02.2025}, " +
+                "resource.Task{id=2, name='Путешествие', description='Собрать чемодан', status=DONE, duration=15, startTime=09:00:00/15.02.2025, endTime=09:15:00/15.02.2025}, " +
+                "resource.Epic{id=4, name=Собеседование, subTasksIdList=[], status=NEW, duration=15, startTime=11:00:00/15.02.2025, endTime=11:15:00/15.02.2025}, " +
+                "resource.SubTask{id=5, epicId=3, name=Сухая уборка, status=NEW, duration=15, startTime=12:00:00/15.02.2025, endTime=12:15:00/15.02.2025}, " +
+                "resource.SubTask{id=6, epicId=3, name=Влажная уборка, status=NEW, duration=15, startTime=13:00:00/15.02.2025, endTime=13:15:00/15.02.2025}, " +
+                "resource.SubTask{id=7, epicId=4, name=Посмотреть видео на ютуб, status=NEW, duration=15, startTime=14:00:00/15.02.2025, endTime=14:15:00/15.02.2025}]";
         String actually = historyManager.getHistory().toString();
         Assertions.assertEquals(expected, actually);
     }
@@ -100,17 +119,17 @@ class InMemoryHistoryManagerTest {
         historyManager.add(epic1);
         historyManager.add(task2);
         historyManager.add(epic2);
-        historyManager.add(subTask2);
         historyManager.add(subTask1);
+        historyManager.add(subTask2);
         historyManager.add(subTask3);
 
-        String expected = "[resource.Task{id=1, name='Купить продукты', description='Молоко и яйца', status=NEW}, " +
-                "resource.Epic{id=3, name=Уборка по дому, subTasksIdList=[], status=NEW}, " +
-                "resource.Task{id=2, name='Путешествие', description='Собрать чемодан', status=DONE}, " +
-                "resource.Epic{id=4, name=Собеседование, subTasksIdList=[], status=NEW}, " +
-                "resource.SubTask{id=6, epicId=3, name=Влажная уборка, status=NEW}, " +
-                "resource.SubTask{id=5, epicId=3, name=Сухая уборка, status=NEW}, " +
-                "resource.SubTask{id=7, epicId=4, name=Посмотреть видео на ютуб, status=NEW}]";
+        String expected = "[resource.Task{id=1, name='Купить продукты', description='Молоко и яйца', status=NEW, duration=15, startTime=08:00:00/15.02.2025, endTime=08:15:00/15.02.2025}, " +
+                "resource.Epic{id=3, name=Уборка по дому, subTasksIdList=[], status=NEW, duration=15, startTime=10:00:00/15.02.2025, endTime=10:15:00/15.02.2025}, " +
+                "resource.Task{id=2, name='Путешествие', description='Собрать чемодан', status=DONE, duration=15, startTime=09:00:00/15.02.2025, endTime=09:15:00/15.02.2025}, " +
+                "resource.Epic{id=4, name=Собеседование, subTasksIdList=[], status=NEW, duration=15, startTime=11:00:00/15.02.2025, endTime=11:15:00/15.02.2025}, " +
+                "resource.SubTask{id=5, epicId=3, name=Сухая уборка, status=NEW, duration=15, startTime=12:00:00/15.02.2025, endTime=12:15:00/15.02.2025}, " +
+                "resource.SubTask{id=6, epicId=3, name=Влажная уборка, status=NEW, duration=15, startTime=13:00:00/15.02.2025, endTime=13:15:00/15.02.2025}, " +
+                "resource.SubTask{id=7, epicId=4, name=Посмотреть видео на ютуб, status=NEW, duration=15, startTime=14:00:00/15.02.2025, endTime=14:15:00/15.02.2025}]";
         String actually = historyManager.getHistory().toString();
         Assertions.assertEquals(expected, actually);
     }

@@ -1,5 +1,9 @@
 package resource;
 
+import util.DataTimeFormat;
+
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,11 +11,15 @@ public class Epic extends Task {
     private final List<Integer> subTasks = new ArrayList<>();
 
     public Epic(String name, String description) {
-        super(name, description, Status.NEW);
+        super(name, description, Status.NEW, Duration.ofMinutes(0), LocalDateTime.now());
     }
 
-    public Epic(int id, String taskName, String description, Status status) {
-        super(id, taskName, description, status);
+    public Epic(String name, String description, Duration taskDuration, LocalDateTime startTime) {
+        super(name, description, Status.NEW, taskDuration, startTime);
+    }
+
+    public Epic(int id, String name, String description, Status status, Duration duration, LocalDateTime startTime) {
+        super(id, name, description, Status.NEW, duration, startTime);
     }
 
 
@@ -22,12 +30,25 @@ public class Epic extends Task {
                 ", name=" + getName() +
                 ", subTasksIdList=" + getSubTasksList() +
                 ", status=" + getStatus() +
+                ", duration=" + getDuration().toMinutes() +
+                ", startTime=" + getStartTime().format(DataTimeFormat.getDataTimeFormat()) +
+                ", endTime=" + getEndTime().format(DataTimeFormat.getDataTimeFormat()) +
                 '}';
     }
 
     @Override
     public String serializeToCsv() {
-        return String.format("%s,%s,%s,%s,%s,%s\n", getId(), TaskType.EPIC, getName(), getStatus(), getDescription(), subTasks);
+        return String.format(
+                "%s,%s,%s,%s,%s,%s,%s,%s,%s\n",
+                getId(),
+                TaskType.EPIC,
+                getName(),
+                getStatus(),
+                getDescription(),
+                getDuration().toMinutes(),
+                getStartTime().format(DataTimeFormat.getDataTimeFormat()),
+                getEndTime().format(DataTimeFormat.getDataTimeFormat()),
+                subTasks);
     }
 
     public void addSubTaskId(SubTask subTask) {

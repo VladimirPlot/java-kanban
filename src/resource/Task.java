@@ -1,5 +1,9 @@
 package resource;
 
+import util.DataTimeFormat;
+
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class Task {
@@ -8,22 +12,53 @@ public class Task {
     private String description;
     private int id;
     private Status status;
+    private Duration duration;
+    private LocalDateTime startTime;
+    private LocalDateTime endTime;
 
-    public Task(String name, String description, Status status) {
+    public Task(
+            String name,
+            String description,
+            Status status,
+            Duration duration,
+            LocalDateTime startTime
+    ) {
         this.name = name;
         this.description = description;
         this.status = status;
+        this.duration = duration;
+        this.startTime = startTime;
+        this.endTime = startTime.plus(duration);
     }
 
-    public Task(int id, String taskName, String description, Status status) {
+    public Task(
+            int id,
+            String taskName,
+            String description,
+            Status status,
+            Duration duration,
+            LocalDateTime startTime
+    ) {
         this.id = id;
         this.name = taskName;
         this.description = description;
         this.status = status;
+        this.duration = duration;
+        this.startTime = startTime;
+        this.endTime = startTime.plus(duration);
     }
 
     public String serializeToCsv() {
-        return String.format("%s,%s,%s,%s,%s\n", id, TaskType.TASK, name, status, description);
+        return String.format(
+                "%s,%s,%s,%s,%s,%s,%s,%s\n",
+                id,
+                TaskType.TASK,
+                name,
+                status,
+                description,
+                duration.toMinutes(),
+                startTime.format(DataTimeFormat.getDataTimeFormat()),
+                endTime.format(DataTimeFormat.getDataTimeFormat()));
     }
 
     @Override
@@ -33,6 +68,9 @@ public class Task {
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", status=" + status +
+                ", duration=" + duration.toMinutes() +
+                ", startTime=" + startTime.format(DataTimeFormat.getDataTimeFormat()) +
+                ", endTime=" + endTime.format(DataTimeFormat.getDataTimeFormat()) +
                 '}';
     }
 
@@ -79,5 +117,29 @@ public class Task {
 
     public void setStatus(Status status) {
         this.status = status;
+    }
+
+    public Duration getDuration() {
+        return duration;
+    }
+
+    public void setDuration(Duration duration) {
+        this.duration = duration;
+    }
+
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public LocalDateTime getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(LocalDateTime endTime) {
+        this.endTime = endTime;
     }
 }

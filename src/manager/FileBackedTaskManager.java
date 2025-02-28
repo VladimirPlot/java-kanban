@@ -2,10 +2,12 @@ package manager;
 
 import exception.ManagerSaveException;
 import resource.*;
+import util.DataTimeFormat;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,6 +28,21 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         getAllSubTasks().forEach(subTask -> lines.add(subTask.serializeToCsv()));
 
         saveToCsv(lines);
+    }
+
+    public void load() {
+        List<String> lines;
+        try {
+            lines = loadFromCsv();
+        } catch (ManagerSaveException e) {
+            throw new RuntimeException(e);
+        }
+
+        lines.removeFirst();
+
+        for (String line : lines) {
+            deSerialize(line);
+        }
     }
 
     public static FileBackedTaskManager loadFromFile(File file) {
@@ -120,13 +137,18 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             throw new ManagerSaveException("Невозможно сохранить данные в файл.");
         }
 
-        try (BufferedWriter writer = Files.newBufferedWriter(file.toPath(), StandardCharsets.UTF_8)) {
+        try {
+            FileWriter fileWriter = new FileWriter(file, StandardCharsets.UTF_8, false);
+            BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+
             for (String line : lines) {
-                writer.write(line);
-                writer.newLine(); // Добавляем перенос строки
+                bufferedWriter.write(line);
             }
+
+            bufferedWriter.close();
+
         } catch (IOException e) {
-            throw new ManagerSaveException("Ошибка при сохранении данных в CSV: " + e.getMessage());
+            throw new RuntimeException(e);
         }
     }
 
@@ -137,13 +159,17 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
         List<String> lines = new ArrayList<>();
 
-        try (BufferedReader reader = Files.newBufferedReader(file.toPath(), StandardCharsets.UTF_8)) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                lines.add(line);
+        try {
+            FileReader fileReader = new FileReader(file);
+            BufferedReader bufferedReader = new BufferedReader(fileReader);
+
+            while (bufferedReader.ready()) {
+                lines.add(bufferedReader.readLine());
             }
+
+            bufferedReader.close();
         } catch (IOException e) {
-            throw new ManagerSaveException("Ошибка при загрузке данных из CSV: " + e.getMessage());
+            throw new RuntimeException(e);
         }
 
         return lines;
@@ -169,14 +195,18 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                             Integer.parseInt(lines[0]),
                             lines[2],
                             lines[4],
-                            getTaskStatusFromString(lines[3])
+                            getTaskStatusFromString(lines[3]),
+                            Duration.ofMinutes(Long.parseLong(lines[5])),
+                            LocalDateTime.parse(lines[6], DataTimeFormat.getDataTimeFormat())
                     ));
             case EPIC -> super.createEpic(
                     new Epic(
                             Integer.parseInt(lines[0]),
                             lines[2],
                             lines[4],
-                            getTaskStatusFromString(lines[3])
+                            getTaskStatusFromString(lines[3]),
+                            Duration.ofMinutes(Long.parseLong(lines[5])),
+                            LocalDateTime.parse(lines[6], DataTimeFormat.getDataTimeFormat())
                     ));
 
             case SUBTASK -> {
@@ -188,7 +218,9 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                                 epicId,
                                 lines[2],
                                 lines[4],
-                                getTaskStatusFromString(lines[3])
+                                getTaskStatusFromString(lines[3]),
+                                Duration.ofMinutes(Long.parseLong(lines[5])),
+                                LocalDateTime.parse(lines[6], DataTimeFormat.getDataTimeFormat())
                         ));
             }
         }

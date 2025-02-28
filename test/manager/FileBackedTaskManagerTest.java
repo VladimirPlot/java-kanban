@@ -11,6 +11,10 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 class FileBackedTaskManagerTest {
     private Path filePath;
@@ -36,21 +40,29 @@ class FileBackedTaskManagerTest {
         task1 = new Task(
                 "Приготовить кофе",
                 "добавить сливки",
-                Status.NEW
+                Status.NEW,
+                Duration.ofMinutes(15),
+                LocalDateTime.of(LocalDate.now(), LocalTime.of(8,0))
         );
         task2 = new Task(
                 "Купить хлеб",
                 "половину буханки",
-                Status.DONE
+                Status.DONE,
+                Duration.ofMinutes(15),
+                LocalDateTime.of(LocalDate.now(), LocalTime.of(9,0))
         );
 
         epic1 = new Epic(
                 "Уборка по дому",
-                "произвести уборку по всему дому"
+                "произвести уборку по всему дому",
+                Duration.ofMinutes(15),
+                LocalDateTime.of(LocalDate.now(), LocalTime.of(10,0))
         );
         epic2 = new Epic(
                 "Хомяк",
-                "покормить хомяка"
+                "покормить хомяка",
+                Duration.ofMinutes(15),
+                LocalDateTime.of(LocalDate.now(), LocalTime.of(11,0))
         );
 
         subTask1 = new SubTask(
@@ -58,21 +70,27 @@ class FileBackedTaskManagerTest {
                 3,
                 "Пропылесосить комнаты",
                 "тщательно",
-                Status.NEW
+                Status.NEW,
+                Duration.ofMinutes(15),
+                LocalDateTime.of(LocalDate.now(), LocalTime.of(12,0))
         );
         subTask2 = new SubTask(
                 6,
                 3,
                 "Помыть полы",
                 "мыть с чистящим средством",
-                Status.NEW
+                Status.NEW,
+                Duration.ofMinutes(15),
+                LocalDateTime.of(LocalDate.now(), LocalTime.of(13,0))
         );
         subTask3 = new SubTask(
                 7,
                 3,
                 "Разобрать посудомойку",
                 "протереть посуду",
-                Status.NEW
+                Status.NEW,
+                Duration.ofMinutes(15),
+                LocalDateTime.of(LocalDate.now(), LocalTime.of(14,0))
         );
 
     }
@@ -105,7 +123,7 @@ class FileBackedTaskManagerTest {
     @Test
     void testUpdateTask() {
         taskManager.createTask(task1);
-        Task task = taskManager.getTaskById(1);
+        Task task = taskManager.getTaskById(1).orElseThrow(RuntimeException::new);
         task.setName("Test task");
         taskManager.updateTask(task);
         TaskManager loadedTaskManager = Managers.loadFromFile(filePath.toFile());
@@ -148,7 +166,7 @@ class FileBackedTaskManagerTest {
     @Test
     void testUpdateEpic() {
         taskManager.createEpic(epic2);
-        Epic epic = taskManager.getEpicById(1);
+        Epic epic = taskManager.getEpicById(1).orElseThrow(RuntimeException::new);
         epic.setName("Test name");
         taskManager.updateEpic(epic);
         TaskManager loadedTaskManager = Managers.loadFromFile(filePath.toFile());
@@ -202,7 +220,7 @@ class FileBackedTaskManagerTest {
         taskManager.createSubTask(subTask1);
         taskManager.createSubTask(subTask2);
         taskManager.createSubTask(subTask3);
-        SubTask subTask = taskManager.getSubTaskById(6);
+        SubTask subTask = taskManager.getSubTaskById(6).orElseThrow(RuntimeException::new);
         subTask.setName("Test subTask");
         taskManager.updateSubTask(subTask);
         TaskManager loadedTaskManager = Managers.loadFromFile(filePath.toFile());
