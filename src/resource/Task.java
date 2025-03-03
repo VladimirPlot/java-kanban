@@ -1,5 +1,6 @@
 package resource;
 
+import manager.TaskSerializer;
 import util.DataTimeFormat;
 
 import java.time.Duration;
@@ -49,16 +50,7 @@ public class Task {
     }
 
     public String serializeToCsv() {
-        return String.format(
-                "%s,%s,%s,%s,%s,%s,%s,%s\n",
-                id,
-                TaskType.TASK,
-                name,
-                status,
-                description,
-                duration.toMinutes(),
-                startTime.format(DataTimeFormat.getDataTimeFormat()),
-                endTime.format(DataTimeFormat.getDataTimeFormat()));
+        return TaskSerializer.serializeTask(this);
     }
 
     @Override

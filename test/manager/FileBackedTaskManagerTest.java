@@ -42,27 +42,27 @@ class FileBackedTaskManagerTest {
                 "добавить сливки",
                 Status.NEW,
                 Duration.ofMinutes(15),
-                LocalDateTime.of(LocalDate.now(), LocalTime.of(8,0))
+                LocalDateTime.of(LocalDate.now(), LocalTime.of(8, 0))
         );
         task2 = new Task(
                 "Купить хлеб",
                 "половину буханки",
                 Status.DONE,
                 Duration.ofMinutes(15),
-                LocalDateTime.of(LocalDate.now(), LocalTime.of(9,0))
+                LocalDateTime.of(LocalDate.now(), LocalTime.of(9, 0))
         );
 
         epic1 = new Epic(
                 "Уборка по дому",
                 "произвести уборку по всему дому",
                 Duration.ofMinutes(15),
-                LocalDateTime.of(LocalDate.now(), LocalTime.of(10,0))
+                LocalDateTime.of(LocalDate.now(), LocalTime.of(10, 0))
         );
         epic2 = new Epic(
                 "Хомяк",
                 "покормить хомяка",
                 Duration.ofMinutes(15),
-                LocalDateTime.of(LocalDate.now(), LocalTime.of(11,0))
+                LocalDateTime.of(LocalDate.now(), LocalTime.of(11, 0))
         );
 
         subTask1 = new SubTask(
@@ -72,7 +72,7 @@ class FileBackedTaskManagerTest {
                 "тщательно",
                 Status.NEW,
                 Duration.ofMinutes(15),
-                LocalDateTime.of(LocalDate.now(), LocalTime.of(12,0))
+                LocalDateTime.of(LocalDate.now(), LocalTime.of(12, 0))
         );
         subTask2 = new SubTask(
                 6,
@@ -81,7 +81,7 @@ class FileBackedTaskManagerTest {
                 "мыть с чистящим средством",
                 Status.NEW,
                 Duration.ofMinutes(15),
-                LocalDateTime.of(LocalDate.now(), LocalTime.of(13,0))
+                LocalDateTime.of(LocalDate.now(), LocalTime.of(13, 0))
         );
         subTask3 = new SubTask(
                 7,
@@ -90,7 +90,7 @@ class FileBackedTaskManagerTest {
                 "протереть посуду",
                 Status.NEW,
                 Duration.ofMinutes(15),
-                LocalDateTime.of(LocalDate.now(), LocalTime.of(14,0))
+                LocalDateTime.of(LocalDate.now(), LocalTime.of(14, 0))
         );
 
     }

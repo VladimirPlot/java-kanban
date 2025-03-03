@@ -10,6 +10,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
     private final File file;
@@ -30,27 +31,12 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         saveToCsv(lines);
     }
 
-    public void load() {
-        List<String> lines;
-        try {
-            lines = loadFromCsv();
-        } catch (ManagerSaveException e) {
-            throw new RuntimeException(e);
-        }
-
-        lines.removeFirst();
-
-        for (String line : lines) {
-            deSerialize(line);
-        }
-    }
-
     public static FileBackedTaskManager loadFromFile(File file) {
         FileBackedTaskManager manager = new FileBackedTaskManager(file);
         List<String> lines = manager.loadFromCsv();
 
         if (!lines.isEmpty()) {
-            lines.removeFirst(); // Убираем заголовок
+            lines.removeFirst();
             for (String line : lines) {
                 manager.deSerialize(line);
             }
@@ -60,129 +46,131 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     @Override
-    public void createTask(Task task) {
-        super.createTask(task);
-        save();
+    public Optional<Task> createTask(Task task) {
+        Optional<Task> createdTask = super.createTask(task);
+        createdTask.ifPresent(t -> save());
+        return createdTask;
     }
 
     @Override
-    public Task updateTask(Task task) {
-        Task updatedTask = super.updateTask(task);
-        save();
+    public Optional<Task> updateTask(Task task) {
+        Optional<Task> updatedTask = super.updateTask(task);
+        updatedTask.ifPresent(t -> save());
         return updatedTask;
     }
 
     @Override
-    public void removeTaskById(int id) {
-        super.removeTaskById(id);
+    public Optional<Void> removeTaskById(int id) {
+        Optional<Void> result = super.removeTaskById(id);
         save();
+        return result;
     }
 
     @Override
-    public void removeAllTasks() {
-        super.removeAllTasks();
+    public Optional<Void> removeAllTasks() {
+        Optional<Void> result = super.removeAllTasks();
         save();
+        return result;
     }
 
     @Override
-    public void createEpic(Epic epic) {
-        super.createEpic(epic);
-        save();
+    public Optional<Epic> createEpic(Epic epic) {
+        Optional<Epic> createdEpic = super.createEpic(epic);
+        createdEpic.ifPresent(e -> save());
+        return createdEpic;
     }
 
     @Override
-    public void updateEpic(Epic epic) {
-        super.updateEpic(epic);
-        save();
+    public Optional<Epic> updateEpic(Epic epic) {
+        Optional<Epic> updatedEpic = super.updateEpic(epic);
+        updatedEpic.ifPresent(e -> save());
+        return updatedEpic;
     }
 
     @Override
-    public void removeEpicById(int id) {
-        super.removeEpicById(id);
+    public Optional<Void> removeEpicById(int id) {
+        Optional<Void> result = super.removeEpicById(id);
         save();
+        return result;
     }
 
     @Override
-    public void removeAllEpics() {
-        super.removeAllEpics();
+    public Optional<Void> removeAllEpics() {
+        Optional<Void> result = super.removeAllEpics();
         save();
+        return result;
     }
 
     @Override
-    public void createSubTask(SubTask subTask) {
-        super.createSubTask(subTask);
-        save();
+    public Optional<SubTask> createSubTask(SubTask subTask) {
+        Optional<SubTask> createdSubTask = super.createSubTask(subTask);
+        createdSubTask.ifPresent(s -> save());
+        return createdSubTask;
     }
 
     @Override
-    public void updateSubTask(SubTask subTask) {
-        super.updateSubTask(subTask);
-        save();
+    public Optional<SubTask> updateSubTask(SubTask subTask) {
+        Optional<SubTask> updatedSubTask = super.updateSubTask(subTask);
+        updatedSubTask.ifPresent(s -> save());
+        return updatedSubTask;
     }
 
     @Override
-    public void removeSubTaskById(int id) {
-        super.removeSubTaskById(id);
+    public Optional<Void> removeSubTaskById(int id) {
+        Optional<Void> result = super.removeSubTaskById(id);
         save();
+        return result;
     }
 
     @Override
-    public void removeAllSubTasks() {
-        super.removeAllSubTasks();
+    public Optional<Void> removeAllSubTasks() {
+        Optional<Void> result = super.removeAllSubTasks();
         save();
+        return result;
     }
 
-    private void saveToCsv(List<String> lines) throws ManagerSaveException {
+    private void saveToCsv(List<String> lines) {
         if (file == null) {
             throw new ManagerSaveException("Невозможно сохранить данные в файл.");
         }
 
-        try {
-            FileWriter fileWriter = new FileWriter(file, StandardCharsets.UTF_8, false);
-            BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
-
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, StandardCharsets.UTF_8, false))) {
             for (String line : lines) {
-                bufferedWriter.write(line);
+                writer.write(line);
+                writer.newLine();
             }
-
-            bufferedWriter.close();
-
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new ManagerSaveException("Ошибка при сохранении данных в CSV: " + e.getMessage());
         }
     }
 
-    private List<String> loadFromCsv() throws ManagerSaveException {
+    private List<String> loadFromCsv() {
         if (file == null) {
             throw new ManagerSaveException("Невозможно загрузить данные из файла.");
         }
 
         List<String> lines = new ArrayList<>();
 
-        try {
-            FileReader fileReader = new FileReader(file);
-            BufferedReader bufferedReader = new BufferedReader(fileReader);
-
-            while (bufferedReader.ready()) {
-                lines.add(bufferedReader.readLine());
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                lines.add(line);
             }
-
-            bufferedReader.close();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new ManagerSaveException("Ошибка при загрузке данных из CSV: " + e.getMessage());
         }
 
         return lines;
     }
 
     private void deSerialize(String line) {
-        if (line.isBlank()) { // Проверяем, что строка не пустая
+        if (line.isBlank()) {
             return;
         }
 
         String[] lines = line.trim().split(",");
 
-        if (lines.length < 5) { // Минимальная длина для корректных записей
+        if (lines.length < 5) {
             System.out.println("Ошибка: некорректный формат строки - " + line);
             return;
         }

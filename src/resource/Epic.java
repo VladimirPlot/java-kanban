@@ -1,5 +1,6 @@
 package resource;
 
+import manager.TaskSerializer;
 import util.DataTimeFormat;
 
 import java.time.Duration;
@@ -38,17 +39,7 @@ public class Epic extends Task {
 
     @Override
     public String serializeToCsv() {
-        return String.format(
-                "%s,%s,%s,%s,%s,%s,%s,%s,%s\n",
-                getId(),
-                TaskType.EPIC,
-                getName(),
-                getStatus(),
-                getDescription(),
-                getDuration().toMinutes(),
-                getStartTime().format(DataTimeFormat.getDataTimeFormat()),
-                getEndTime().format(DataTimeFormat.getDataTimeFormat()),
-                subTasks);
+        return TaskSerializer.serializeEpic(this);
     }
 
     public void addSubTaskId(SubTask subTask) {

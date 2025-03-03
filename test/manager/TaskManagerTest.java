@@ -1,5 +1,6 @@
 package manager;
 
+import exception.InvalidTaskTimeException;
 import resource.Epic;
 import resource.SubTask;
 import resource.Task;
@@ -12,6 +13,8 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public abstract class TaskManagerTest<T extends TaskManager> {
     protected abstract T createManager();
@@ -114,7 +117,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         taskManager.createTask(task2);
         taskManager.removeAllTasks();
 
-        Assertions.assertTrue(taskManager.getAllTasks().isEmpty());
+        assertTrue(taskManager.getAllTasks().isEmpty());
     }
 
     @Test
@@ -173,7 +176,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         taskManager.createEpic(epic2);
         taskManager.removeAllEpics();
 
-        Assertions.assertTrue(taskManager.getAllEpics().isEmpty());
+        assertTrue(taskManager.getAllEpics().isEmpty());
     }
 
     @Test
@@ -377,7 +380,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
         taskManager.removeAllSubTasks();
 
-        Assertions.assertTrue(taskManager.getAllSubTasks().isEmpty());
+        assertTrue(taskManager.getAllSubTasks().isEmpty());
     }
 
     @Test
@@ -501,11 +504,28 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void TestPrioritizedTasks() {
-        taskManager.createTask(task2);
-        taskManager.createTask(task1);
-        String expected = "[resource.Task{id=2, name='Купить продукты', description='Молоко и яйца', status=NEW, duration=15, startTime=08:00:00/15.02.2025, endTime=08:15:00/15.02.2025}, " +
-                "resource.Task{id=1, name='Путешествие', description='Собрать чемодан', status=DONE, duration=15, startTime=09:00:00/15.02.2025, endTime=09:15:00/15.02.2025}]";
-        String actually = taskManager.getPrioritizedTasks().toString();
-        Assertions.assertEquals(expected, actually);
+        // Первая задача (основа для проверки)
+        Task task1 = new Task(1, "Task 1", "Base Task", Status.NEW, Duration.ofMinutes(60), LocalDateTime.of(2025, 3, 3, 10, 0));
+        assertTrue(taskManager.createTask(task1).isPresent());
+
+        // Полное совпадение
+        Task task2 = new Task(2, "Task 2", "Overlap Same", Status.NEW, Duration.ofMinutes(60), LocalDateTime.of(2025, 3, 3, 10, 0));
+        assertThrows(InvalidTaskTimeException.class, () -> taskManager.createTask(task2));
+
+        // Полное вложение
+        Task task3 = new Task(3, "Task 3", "Fully Inside", Status.NEW, Duration.ofMinutes(30), LocalDateTime.of(2025, 3, 3, 10, 15));
+        assertThrows(InvalidTaskTimeException.class, () -> taskManager.createTask(task3));
+
+        // Пересечение слева
+        Task task4 = new Task(4, "Task 4", "Overlap Left", Status.NEW, Duration.ofMinutes(45), LocalDateTime.of(2025, 3, 3, 9, 45));
+        assertThrows(InvalidTaskTimeException.class, () -> taskManager.createTask(task4));
+
+        // Пересечение справа
+        Task task5 = new Task(5, "Task 5", "Overlap Right", Status.NEW, Duration.ofMinutes(45), LocalDateTime.of(2025, 3, 3, 10, 45));
+        assertThrows(InvalidTaskTimeException.class, () -> taskManager.createTask(task5));
+
+        // Без пересечения (успешно добавляется)
+        Task task6 = new Task(6, "Task 6", "No Overlap", Status.NEW, Duration.ofMinutes(60), LocalDateTime.of(2025, 3, 3, 11, 10));
+        assertTrue(taskManager.createTask(task6).isPresent());
     }
 }

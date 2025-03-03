@@ -21,17 +21,11 @@ public class InMemoryTaskManager implements TaskManager {
     private int id = 1;
 
     @Override
-    public void createTask(Task task) {
+    public Optional<Task> createTask(Task task) {
         task.setId(nextId());
-
-        try {
-            validateTask(task);
-        } catch (InvalidTaskTimeException e) {
-            System.err.println(e.getMessage());
-        }
-
+        validateAndAddTask(task);
         taskMap.put(task.getId(), task);
-        prioritizedTasks.add(task);
+        return Optional.of(task);
     }
 
     @Override
@@ -47,36 +41,37 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public Task updateTask(Task task) {
-        try {
-            validateTask(task);
-        } catch (InvalidTaskTimeException e) {
-            System.err.println(e.getMessage());
-        }
-
+    public Optional<Task> updateTask(Task task) {
+        validateAndAddTask(task);
         if (taskMap.containsKey(task.getId())) {
+            prioritizedTasks.remove(task);
             taskMap.replace(task.getId(), task);
+            prioritizedTasks.add(task);
         }
-        return taskMap.get(task.getId());
+        return Optional.of(taskMap.get(task.getId()));
     }
 
     @Override
-    public void removeTaskById(int id) {
+    public Optional<Void> removeTaskById(int id) {
         prioritizedTasks.remove(taskMap.get(id));
         taskMap.remove(id);
         historyManager.remove(id);
+        return Optional.empty();
     }
 
     @Override
-    public void removeAllTasks() {
+    public Optional<Void> removeAllTasks() {
+        taskMap.keySet().forEach(historyManager::remove);
         taskMap.values().forEach(prioritizedTasks::remove);
         taskMap.clear();
+        return Optional.empty();
     }
 
     @Override
-    public void createEpic(Epic epic) {
+    public Optional<Epic> createEpic(Epic epic) {
         epic.setId(nextId());
         epicMap.put(epic.getId(), epic);
+        return Optional.of(epic);
     }
 
     @Override
@@ -92,45 +87,44 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void updateEpic(Epic epic) {
+    public Optional<Epic> updateEpic(Epic epic) {
         if (epicMap.containsKey(epic.getId())) {
             epicMap.replace(epic.getId(), epic);
         }
+        return Optional.of(epic);
     }
 
     @Override
-    public void removeEpicById(int id) {
+    public Optional<Void> removeEpicById(int id) {
         Epic epic = epicMap.get(id);
         removeListSubTasks(epic.getSubTasksList());
         epicMap.remove(id);
         historyManager.remove(id);
+        return Optional.empty();
     }
 
     @Override
-    public void removeAllEpics() {
-        epicMap.values().forEach(prioritizedTasks::remove);
+    public Optional<Void> removeAllEpics() {
+        epicMap.keySet().forEach(historyManager::remove);
+        subTaskMap.values().forEach(prioritizedTasks::remove);
         subTaskMap.clear();
         epicMap.clear();
+        return Optional.empty();
     }
 
     @Override
-    public void createSubTask(SubTask subTask) {
+    public Optional<SubTask> createSubTask(SubTask subTask) {
         subTask.setId(nextId());
-
-        try {
-            validateTask(subTask);
-        } catch (InvalidTaskTimeException e) {
-            System.err.println(e.getMessage());
-        }
+        validateAndAddTask(subTask);
 
         Epic epic = epicMap.get(subTask.getIdEpic());
         epic.addSubTaskId(subTask);
 
         subTaskMap.put(subTask.getId(), subTask);
-        updateEpicStatus(epicMap.get(subTask.getIdEpic()));
+        updateEpicStatus(epic);
         updateEpicTime(epic);
 
-        prioritizedTasks.add(subTask);
+        return Optional.of(subTask);
     }
 
     @Override
@@ -146,23 +140,20 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void updateSubTask(SubTask subTask) {
-        try {
-            validateTask(subTask);
-        } catch (InvalidTaskTimeException e) {
-            System.err.println(e.getMessage());
-        }
-
+    public Optional<SubTask> updateSubTask(SubTask subTask) {
+        validateAndAddTask(subTask);
         if (subTaskMap.containsKey(subTask.getId())) {
+            prioritizedTasks.remove(subTask);
             subTaskMap.replace(subTask.getId(), subTask);
+            prioritizedTasks.add(subTask);
         }
         updateEpicStatus(epicMap.get(subTask.getIdEpic()));
         updateEpicTime(epicMap.get(subTask.getIdEpic()));
-        prioritizedTasks.add(subTask);
+        return Optional.of(subTask);
     }
 
     @Override
-    public void removeSubTaskById(int id) {
+    public Optional<Void> removeSubTaskById(int id) {
         Epic epic = epicMap.get(subTaskMap.get(id).getIdEpic());
         epic.removeSubTaskInList(id);
         prioritizedTasks.remove(subTaskMap.get(id));
@@ -170,10 +161,13 @@ public class InMemoryTaskManager implements TaskManager {
         updateEpicStatus(epic);
         updateEpicTime(epic);
         historyManager.remove(id);
+        return Optional.empty();
     }
 
     @Override
-    public void removeAllSubTasks() {
+    public Optional<Void> removeAllSubTasks() {
+        subTaskMap.keySet().forEach(historyManager::remove);
+
         clearEpicSubTasks();
         subTaskMap.clear();
         epicMap.values().forEach(epic -> {
@@ -183,6 +177,7 @@ public class InMemoryTaskManager implements TaskManager {
             epic.setDuration(Duration.ofMinutes(0));
             prioritizedTasks.remove(epic);
         });
+        return Optional.empty();
     }
 
     @Override
@@ -198,6 +193,7 @@ public class InMemoryTaskManager implements TaskManager {
     private int nextId() {
         return id++;
     }
+
 
     private void updateEpicStatus(Epic epic) {
         if (epic.getSubTasksList().isEmpty()) {
@@ -243,20 +239,25 @@ public class InMemoryTaskManager implements TaskManager {
         epicMap.values().forEach(Epic::clearSubTasksList);
     }
 
-    private void validateTask(Task task) throws InvalidTaskTimeException {
+    private void validateAndAddTask(Task task) {
+        validateTask(task);
+        prioritizedTasks.add(task);
+    }
+
+    private void validateTask(Task task) {
         List<Integer> collected = prioritizedTasks.stream()
                 .filter(t -> t.getId() != task.getId())
-                .filter(t -> ((t.getStartTime().isBefore(task.getStartTime()) && (t.getEndTime().isAfter(task.getStartTime())))) ||
-                        (t.getStartTime().isBefore(task.getEndTime()) && (t.getEndTime().isAfter(task.getEndTime()))) ||
-                        (t.getStartTime().isBefore(task.getStartTime()) && (t.getEndTime().isAfter(task.getEndTime()))) ||
-                        (t.getStartTime().isAfter(task.getStartTime()) && (t.getEndTime().isBefore(task.getEndTime()))) ||
-                        (t.getStartTime().equals(task.getStartTime())))
+                .filter(t -> isIntersected(t.getStartTime(), t.getEndTime(), task.getStartTime(), task.getEndTime()))
                 .map(Task::getId)
                 .toList();
 
         if (!collected.isEmpty()) {
             throw new InvalidTaskTimeException("Задача с id=" + task.getId() + " пересекается с задачами id=" + collected);
         }
+    }
+
+    private boolean isIntersected(LocalDateTime x1, LocalDateTime x2, LocalDateTime y1, LocalDateTime y2) {
+        return !x1.isAfter(y2) && !y1.isAfter(x2);
     }
 
     private LocalDateTime getMinimalDateTime(Epic epic) {

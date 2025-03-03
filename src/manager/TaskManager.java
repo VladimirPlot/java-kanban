@@ -9,41 +9,41 @@ import java.util.Optional;
 import java.util.Set;
 
 public interface TaskManager {
-    void createTask(Task task);
+    Optional<Task> createTask(Task task);
 
     Optional<Task> getTaskById(int id);
 
     List<Task> getAllTasks();
 
-    Task updateTask(Task task);
+    Optional<Task> updateTask(Task task);
 
-    void removeTaskById(int id);
+    Optional<Void> removeTaskById(int id);
 
-    void removeAllTasks();
+    Optional<Void> removeAllTasks();
 
-    void createEpic(Epic epic);
+    Optional<Epic> createEpic(Epic epic);
 
     Optional<Epic> getEpicById(int id);
 
     List<Epic> getAllEpics();
 
-    void updateEpic(Epic epic);
+    Optional<Epic> updateEpic(Epic epic);
 
-    void removeEpicById(int id);
+    Optional<Void> removeEpicById(int id);
 
-    void removeAllEpics();
+    Optional<Void> removeAllEpics();
 
-    void createSubTask(SubTask subTask);
+    Optional<SubTask> createSubTask(SubTask subTask);
 
     Optional<SubTask> getSubTaskById(int id);
 
     List<SubTask> getAllSubTasks();
 
-    void updateSubTask(SubTask subTask);
+    Optional<SubTask> updateSubTask(SubTask subTask);
 
-    void removeSubTaskById(int id);
+    Optional<Void> removeSubTaskById(int id);
 
-    void removeAllSubTasks();
+    Optional<Void> removeAllSubTasks();
 
     List<Task> getHistory();
 
