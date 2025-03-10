@@ -5,43 +5,47 @@ import resource.SubTask;
 import resource.Task;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 public interface TaskManager {
-    void createTask(Task task);
+    Optional<Task> createTask(Task task);
 
-    void createEpic(Epic epic);
-
-    void createSubTask(SubTask subTask);
-
-    Task getTaskById(int id);
+    Optional<Task> getTaskById(int id);
 
     List<Task> getAllTasks();
 
-    Epic getEpicById(int id);
+    Optional<Task> updateTask(Task task);
+
+    Optional<Void> removeTaskById(int id);
+
+    Optional<Void> removeAllTasks();
+
+    Optional<Epic> createEpic(Epic epic);
+
+    Optional<Epic> getEpicById(int id);
 
     List<Epic> getAllEpics();
 
-    SubTask getSubTaskById(int id);
+    Optional<Epic> updateEpic(Epic epic);
+
+    Optional<Void> removeEpicById(int id);
+
+    Optional<Void> removeAllEpics();
+
+    Optional<SubTask> createSubTask(SubTask subTask);
+
+    Optional<SubTask> getSubTaskById(int id);
 
     List<SubTask> getAllSubTasks();
 
-    void removeTaskById(int id);
+    Optional<SubTask> updateSubTask(SubTask subTask);
 
-    void removeAllTasks();
+    Optional<Void> removeSubTaskById(int id);
 
-    void removeEpicById(int id);
-
-    void removeAllEpics();
-
-    void removeSubTaskById(int id);
-
-    void removeAllSubTasks();
-
-    Task updateTask(Task task);
-
-    void updateEpic(Epic epic);
-
-    void updateSubTask(SubTask subTask);
+    Optional<Void> removeAllSubTasks();
 
     List<Task> getHistory();
+
+    Set<Task> getPrioritizedTasks();
 }

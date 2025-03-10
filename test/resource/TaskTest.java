@@ -3,6 +3,10 @@ package resource;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import util.DataTimeFormat;
+
+import java.time.Duration;
+import java.time.LocalDateTime;
 
 class TaskTest {
     private static Task task1;
@@ -14,20 +18,24 @@ class TaskTest {
                 1,
                 "Купить продукты",
                 "Яйца, молоко, хлеб",
-                Status.NEW
+                Status.NEW,
+                Duration.ofMinutes(10),
+                LocalDateTime.parse("16:07:00/10.07.2025", DataTimeFormat.getDataTimeFormat())
         );
 
         task2 = new Task(
                 1,
                 "Выйти на пробежку",
                 "Подъем в 7 утра",
-                Status.DONE
+                Status.DONE,
+                Duration.ofMinutes(40),
+                LocalDateTime.parse("17:12:00/10.07.2025", DataTimeFormat.getDataTimeFormat())
         );
     }
 
     @Test
     void testToString() {
-        String expected = "resource.Task{id=1, name='Купить продукты', description='Яйца, молоко, хлеб', status=NEW}";
+        String expected = "resource.Task{id=1, name='Купить продукты', description='Яйца, молоко, хлеб', status=NEW, duration=10, startTime=16:07:00/10.07.2025, endTime=16:17:00/10.07.2025}";
         String actually = task1.toString();
         Assertions.assertEquals(expected, actually);
     }
@@ -107,7 +115,7 @@ class TaskTest {
 
     @Test
     void testSerializeToCsv() {
-        String expected = "1,TASK,Купить продукты,NEW,Яйца, молоко, хлеб\n";
+        String expected = "1,TASK,Купить продукты,NEW,Яйца, молоко, хлеб,10,16:07:00/10.07.2025,16:17:00/10.07.2025\n";
         String actually = task1.serializeToCsv();
         Assertions.assertEquals(expected, actually);
     }
