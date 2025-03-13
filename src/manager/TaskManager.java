@@ -17,7 +17,7 @@ public interface TaskManager {
 
     Optional<Task> updateTask(Task task);
 
-    Optional<Void> removeTaskById(int id);
+    Optional<Boolean> removeTaskById(int id);
 
     Optional<Void> removeAllTasks();
 
@@ -29,7 +29,7 @@ public interface TaskManager {
 
     Optional<Epic> updateEpic(Epic epic);
 
-    Optional<Void> removeEpicById(int id);
+    Optional<Boolean> removeEpicById(int id);
 
     Optional<Void> removeAllEpics();
 
@@ -41,7 +41,7 @@ public interface TaskManager {
 
     Optional<SubTask> updateSubTask(SubTask subTask);
 
-    Optional<Void> removeSubTaskById(int id);
+    Optional<Boolean> removeSubTaskById(int id);
 
     Optional<Void> removeAllSubTasks();
 

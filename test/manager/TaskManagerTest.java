@@ -385,7 +385,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void testGetHistory() {
-        final int historySize = 6;
+        final int historySize = 7;
         taskManager.createTask(task1);
         taskManager.createTask(task2);
         taskManager.createEpic(epic1);
@@ -429,7 +429,8 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         taskManager.getSubTaskById(7);
 
         Assertions.assertEquals(historySize, taskManager.getHistory().size());
-        String expected = "[resource.Task{id=1, name='Купить продукты', description='Молоко и яйца', status=NEW, duration=15, startTime=08:00:00/15.02.2025, endTime=08:15:00/15.02.2025}, " +
+        String expected = "[resource.SubTask{id=6, epicId=3, name=Помыть полы, status=NEW, duration=15, startTime=22:00:00/15.02.2025, endTime=22:15:00/15.02.2025}, " +
+                "resource.Task{id=1, name='Купить продукты', description='Молоко и яйца', status=NEW, duration=15, startTime=08:00:00/15.02.2025, endTime=08:15:00/15.02.2025}, " +
                 "resource.Task{id=2, name='Путешествие', description='Собрать чемодан', status=DONE, duration=15, startTime=09:00:00/15.02.2025, endTime=09:15:00/15.02.2025}, " +
                 "resource.Epic{id=3, name=Уборка по дому, subTasksIdList=[5, 6], status=NEW, duration=30, startTime=21:00:00/15.02.2025, endTime=21:30:00/15.02.2025}, " +
                 "resource.Epic{id=4, name=Собеседование, subTasksIdList=[7], status=NEW, duration=15, startTime=10:00:00/15.02.2025, endTime=10:15:00/15.02.2025}, " +
