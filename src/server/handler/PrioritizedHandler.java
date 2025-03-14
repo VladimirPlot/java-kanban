@@ -31,7 +31,7 @@ public class PrioritizedHandler extends BaseHttpHandler {
     }
 
     private void handleGet(HttpExchange exchange) throws IOException {
-        Set<Task> prioritizedTasks = taskManager.getPrioritizedTasks();
-        writeResponse(exchange, gson.toJson(prioritizedTasks), HttpURLConnection.HTTP_OK);
+        Set<Task> prioritizedTasks = getTaskManager().getPrioritizedTasks();
+        writeResponse(exchange, getGson().toJson(prioritizedTasks), HttpURLConnection.HTTP_OK);
     }
 }

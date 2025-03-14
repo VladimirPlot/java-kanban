@@ -45,16 +45,16 @@ public class TaskHandler extends BaseHttpHandler {
         Optional<Integer> id = getId(exchange);
 
         if (id.isPresent()) {
-            Optional<Task> task = taskManager.getTaskById(id.get());
+            Optional<Task> task = getTaskManager().getTaskById(id.get());
 
             if (task.isEmpty()) {
                 writeResponse(exchange, convertToMessage("Задача с id=" + id.get() + " не найдена"), HttpURLConnection.HTTP_NOT_FOUND);
             } else {
-                writeResponse(exchange, gson.toJson(task.get()), HttpURLConnection.HTTP_OK);
+                writeResponse(exchange, getGson().toJson(task.get()), HttpURLConnection.HTTP_OK);
             }
         } else {
-            List<Task> tasks = taskManager.getAllTasks();
-            writeResponse(exchange, gson.toJson(tasks), HttpURLConnection.HTTP_OK);
+            List<Task> tasks = getTaskManager().getAllTasks();
+            writeResponse(exchange, getGson().toJson(tasks), HttpURLConnection.HTTP_OK);
         }
     }
 
@@ -65,7 +65,7 @@ public class TaskHandler extends BaseHttpHandler {
         }
 
         String body = new String(exchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
-        Task task = gson.fromJson(body, Task.class);
+        Task task = getGson().fromJson(body, Task.class);
 
         if (task == null) {
             writeResponse(exchange, convertToMessage("Ошибка десериализации задачи"), HttpURLConnection.HTTP_BAD_REQUEST);
@@ -75,17 +75,17 @@ public class TaskHandler extends BaseHttpHandler {
         Optional<Integer> id = getId(exchange);
 
         if (id.isPresent()) {
-            Optional<Task> updatedTask = taskManager.updateTask(task);
+            Optional<Task> updatedTask = getTaskManager().updateTask(task);
 
             if (updatedTask.isEmpty()) {
                 writeResponse(exchange, convertToMessage("Задача с id=" + id.get() + " не найдена для обновления"), HttpURLConnection.HTTP_NOT_FOUND);
             } else {
-                writeResponse(exchange, gson.toJson(updatedTask.get()), HttpURLConnection.HTTP_OK);
+                writeResponse(exchange, getGson().toJson(updatedTask.get()), HttpURLConnection.HTTP_OK);
             }
         } else {
             try {
-                Optional<Task> createdTask = taskManager.createTask(task);
-                writeResponse(exchange, gson.toJson(createdTask.get()), HttpURLConnection.HTTP_CREATED);
+                Optional<Task> createdTask = getTaskManager().createTask(task);
+                writeResponse(exchange, getGson().toJson(createdTask.get()), HttpURLConnection.HTTP_CREATED);
             } catch (InvalidTaskTimeException e) {
                 writeResponse(exchange, convertToMessage("Задача пересекается с существующими: " + e.getMessage()), HttpURLConnection.HTTP_NOT_ACCEPTABLE);
             }
@@ -96,7 +96,7 @@ public class TaskHandler extends BaseHttpHandler {
         Optional<Integer> id = getId(exchange);
 
         if (id.isPresent()) {
-            Optional<Boolean> result = taskManager.removeTaskById(id.get());
+            Optional<Boolean> result = getTaskManager().removeTaskById(id.get());
 
             if (result.isPresent()) {
                 if (!result.get()) {

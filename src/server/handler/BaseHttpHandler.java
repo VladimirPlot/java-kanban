@@ -14,8 +14,8 @@ import java.util.List;
 import java.util.Optional;
 
 public abstract class BaseHttpHandler implements HttpHandler {
-    TaskManager taskManager;
-    Gson gson;
+    private final TaskManager taskManager;
+    private final Gson gson;
 
     public BaseHttpHandler(TaskManager taskManager, Gson gson) {
         this.taskManager = taskManager;
@@ -59,5 +59,13 @@ public abstract class BaseHttpHandler implements HttpHandler {
 
     protected String convertToMessage(String message) {
         return gson.toJson(new Message(message), Message.class);
+    }
+
+    protected TaskManager getTaskManager() {
+        return taskManager;
+    }
+
+    protected Gson getGson() {
+        return gson;
     }
 }

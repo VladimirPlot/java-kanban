@@ -45,16 +45,16 @@ public class SubTaskHandler extends BaseHttpHandler {
         Optional<Integer> id = getId(exchange);
 
         if (id.isPresent()) {
-            Optional<SubTask> subTask = taskManager.getSubTaskById(id.get());
+            Optional<SubTask> subTask = getTaskManager().getSubTaskById(id.get());
 
             if (subTask.isEmpty()) {
                 writeResponse(exchange, convertToMessage("Подзадача с id=" + id.get() + " не найдена"), HttpURLConnection.HTTP_NOT_FOUND);
             } else {
-                writeResponse(exchange, gson.toJson(subTask.get()), HttpURLConnection.HTTP_OK);
+                writeResponse(exchange, getGson().toJson(subTask.get()), HttpURLConnection.HTTP_OK);
             }
         } else {
-            List<SubTask> subTasks = taskManager.getAllSubTasks();
-            writeResponse(exchange, gson.toJson(subTasks), HttpURLConnection.HTTP_OK);
+            List<SubTask> subTasks = getTaskManager().getAllSubTasks();
+            writeResponse(exchange, getGson().toJson(subTasks), HttpURLConnection.HTTP_OK);
         }
     }
 
@@ -65,7 +65,7 @@ public class SubTaskHandler extends BaseHttpHandler {
         }
 
         String body = new String(exchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
-        SubTask subTask = gson.fromJson(body, SubTask.class);
+        SubTask subTask = getGson().fromJson(body, SubTask.class);
 
         if (subTask == null) {
             writeResponse(exchange, convertToMessage("Ошибка десериализации задачи"), HttpURLConnection.HTTP_BAD_REQUEST);
@@ -75,17 +75,17 @@ public class SubTaskHandler extends BaseHttpHandler {
         Optional<Integer> id = getId(exchange);
 
         if (id.isPresent()) {
-            Optional<SubTask> updatedSubTask = taskManager.updateSubTask(subTask);
+            Optional<SubTask> updatedSubTask = getTaskManager().updateSubTask(subTask);
 
             if (updatedSubTask.isEmpty()) {
                 writeResponse(exchange, convertToMessage("Задача с id=" + id.get() + " не найдена для обновления"), HttpURLConnection.HTTP_NOT_FOUND);
             } else {
-                writeResponse(exchange, gson.toJson(updatedSubTask.get()), HttpURLConnection.HTTP_OK);
+                writeResponse(exchange, getGson().toJson(updatedSubTask.get()), HttpURLConnection.HTTP_OK);
             }
         } else {
             try {
-                Optional<SubTask> createdSubTask = taskManager.createSubTask(subTask);
-                writeResponse(exchange, gson.toJson(createdSubTask.get()), HttpURLConnection.HTTP_CREATED);
+                Optional<SubTask> createdSubTask = getTaskManager().createSubTask(subTask);
+                writeResponse(exchange, getGson().toJson(createdSubTask.get()), HttpURLConnection.HTTP_CREATED);
             } catch (InvalidTaskTimeException e) {
                 writeResponse(exchange, convertToMessage("Задача пересекается с существующими: " + e.getMessage()), HttpURLConnection.HTTP_NOT_ACCEPTABLE);
             }
@@ -97,7 +97,7 @@ public class SubTaskHandler extends BaseHttpHandler {
 
         if (id.isPresent()) {
             try {
-                Optional<Boolean> result = taskManager.removeSubTaskById(id.get());
+                Optional<Boolean> result = getTaskManager().removeSubTaskById(id.get());
 
                 if (result.isPresent()) {
                     if (!result.get()) {

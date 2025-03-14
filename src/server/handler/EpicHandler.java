@@ -44,16 +44,16 @@ public class EpicHandler extends BaseHttpHandler {
         Optional<Integer> id = getId(exchange);
 
         if (id.isPresent()) {
-            Optional<Epic> epic = taskManager.getEpicById(id.get());
+            Optional<Epic> epic = getTaskManager().getEpicById(id.get());
 
             if (epic.isEmpty()) {
                 writeResponse(exchange, convertToMessage("Эпик с id=" + id.get() + " не найден"), HttpURLConnection.HTTP_NOT_FOUND);
             } else {
-                writeResponse(exchange, gson.toJson(epic.get()), HttpURLConnection.HTTP_OK);
+                writeResponse(exchange, getGson().toJson(epic.get()), HttpURLConnection.HTTP_OK);
             }
         } else {
-            List<Epic> epics = taskManager.getAllEpics();
-            writeResponse(exchange, gson.toJson(epics), HttpURLConnection.HTTP_OK);
+            List<Epic> epics = getTaskManager().getAllEpics();
+            writeResponse(exchange, getGson().toJson(epics), HttpURLConnection.HTTP_OK);
         }
     }
 
@@ -64,7 +64,7 @@ public class EpicHandler extends BaseHttpHandler {
         }
 
         String body = new String(exchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
-        Epic epic = gson.fromJson(body, Epic.class);
+        Epic epic = getGson().fromJson(body, Epic.class);
 
         if (epic == null) {
             writeResponse(exchange, convertToMessage("Ошибка десериализации эпика"), HttpURLConnection.HTTP_BAD_REQUEST);
@@ -74,20 +74,20 @@ public class EpicHandler extends BaseHttpHandler {
         Optional<Integer> id = getId(exchange);
 
         if (id.isPresent()) {
-            Optional<Epic> updatedEpic = taskManager.updateEpic(epic);
+            Optional<Epic> updatedEpic = getTaskManager().updateEpic(epic);
 
             if (updatedEpic.isEmpty()) {
                 writeResponse(exchange, convertToMessage("Епик с id=" + id.get() + " не найден для обновления"), HttpURLConnection.HTTP_NOT_FOUND);
             } else {
-                writeResponse(exchange, gson.toJson(updatedEpic.get()), HttpURLConnection.HTTP_OK);
+                writeResponse(exchange, getGson().toJson(updatedEpic.get()), HttpURLConnection.HTTP_OK);
             }
         } else {
-            Optional<Epic> createdEpic = taskManager.createEpic(epic);
+            Optional<Epic> createdEpic = getTaskManager().createEpic(epic);
 
             if (createdEpic.isEmpty()) {
                 writeResponse(exchange, convertToMessage("Ошибка создания эпика"), HttpURLConnection.HTTP_INTERNAL_ERROR);
             } else {
-                writeResponse(exchange, gson.toJson(createdEpic.get()), HttpURLConnection.HTTP_CREATED);
+                writeResponse(exchange, getGson().toJson(createdEpic.get()), HttpURLConnection.HTTP_CREATED);
             }
         }
     }
@@ -96,7 +96,7 @@ public class EpicHandler extends BaseHttpHandler {
         Optional<Integer> id = getId(exchange);
 
         if (id.isPresent()) {
-            Optional<Boolean> result = taskManager.removeEpicById(id.get());
+            Optional<Boolean> result = getTaskManager().removeEpicById(id.get());
 
             if (result.isPresent()) {
                 if (!result.get()) {

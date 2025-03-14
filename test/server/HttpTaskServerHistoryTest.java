@@ -48,7 +48,7 @@ public class HttpTaskServerHistoryTest {
         manager.createSubTask(subTask);
 
         int subTaskId = subTask.getId();
-
+        manager.getSubTaskById(subTaskId);
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create("http://localhost:8080/history"))
                 .GET()
