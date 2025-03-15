@@ -60,8 +60,8 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     @Override
-    public Optional<Void> removeTaskById(int id) {
-        Optional<Void> result = super.removeTaskById(id);
+    public Optional<Boolean> removeTaskById(int id) {
+        Optional<Boolean> result = super.removeTaskById(id);
         save();
         return result;
     }
@@ -88,8 +88,8 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     @Override
-    public Optional<Void> removeEpicById(int id) {
-        Optional<Void> result = super.removeEpicById(id);
+    public Optional<Boolean> removeEpicById(int id) {
+        Optional<Boolean> result = super.removeEpicById(id);
         save();
         return result;
     }
@@ -116,8 +116,8 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     @Override
-    public Optional<Void> removeSubTaskById(int id) {
-        Optional<Void> result = super.removeSubTaskById(id);
+    public Optional<Boolean> removeSubTaskById(int id) {
+        Optional<Boolean> result = super.removeSubTaskById(id);
         save();
         return result;
     }
